@@ -1,0 +1,26 @@
+{
+  "name": "mern_real_estate",
+  "version": "1.0.0",
+  "description": "A Real Estate Website Built Using MERN Stack",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yaswanthsai002/RealBuy.git"
+  },
+  "author": "Kotagiri Yaswanth Sai",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yaswanthsai002/RealBuy/issues"
+  },
+  "homepage": "https://github.com/yaswanthsai002/RealBuy#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.3"
+  }
+}
