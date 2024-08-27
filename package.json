@@ -1,24 +1,31 @@
 {
-  "name": "mern_real_estate",
+  "name": "housefy",
   "version": "1.0.0",
   "description": "A Real Estate Website Built Using MERN Stack",
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon api/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yaswanthsai002/RealBuy.git"
+    "url": "git+https://github.com/yaswanthsai002/housefy.git"
   },
   "author": "Kotagiri Yaswanth Sai",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/yaswanthsai002/RealBuy/issues"
+    "url": "https://github.com/yaswanthsai002/housefy/issues"
   },
-  "homepage": "https://github.com/yaswanthsai002/RealBuy#readme",
+  "homepage": "https://github.com/yaswanthsai002/housefy#readme",
   "dependencies": {
-    "express": "^4.19.2"
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongodb": "^6.8.0",
+    "mongoose": "^8.5.4",
+    "react-icons": "^5.3.0",
+    "react-loader-spinner": "^6.1.6",
+    "react-router-dom": "^6.26.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.3"
