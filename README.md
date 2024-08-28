@@ -1,2 +1,2 @@
-<h1>RealBuy</h1>
-<p>A Real Estate Website built using MERN Stack</p>
+# Housefy
+### A website where user can buy, sell or rent their properties like mansions, villas etc.
