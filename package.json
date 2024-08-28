@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/yaswanthsai002/housefy#readme",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "mongodb": "^6.8.0",

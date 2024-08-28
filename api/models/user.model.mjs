@@ -12,12 +12,6 @@ const userSchema = mongoose.Schema(
       required: [true, "Last Name cannot be empty"],
       trim: true,
     },
-    username: {
-      type: String,
-      required: [true, "Username cannot be empty"],
-      unique: true,
-      trim: true,
-    },
     email: {
       type: String,
       required: [true, "Email cannot be empty"],
@@ -27,8 +21,6 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, "Password cannot be empty"],
       trim: true,
-      minLength: 8,
-      maxLength: 16,
     },
     age: {
       type: Number,
@@ -42,6 +34,6 @@ const userSchema = mongoose.Schema(
   }
 );
 
-const User = mongoose.Model("User", userSchema);
+const User = mongoose.model("User", userSchema);
 
 export default User;
