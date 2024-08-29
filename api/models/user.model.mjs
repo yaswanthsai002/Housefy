@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 
 const userSchema = mongoose.Schema(
   {
-    first_name: {
+    firstName: {
       type: String,
       required: [true, "First Name cannot be empty"],
       trim: true,
     },
-    last_name: {
+    lastName: {
       type: String,
       required: [true, "Last Name cannot be empty"],
       trim: true,
@@ -22,12 +22,13 @@ const userSchema = mongoose.Schema(
       required: [true, "Password cannot be empty"],
       trim: true,
     },
-    age: {
-      type: Number,
-      min: 1,
-      max: 100,
-      required: [true, "Age is required"],
-    },
+    // age: {
+    //   type: Number,
+    //   min: 1,
+    //   max: 100,
+    //   required: [true, "Age is required"],
+    //   default: () => Math.floor(Math.random() * 100),
+    // },
   },
   {
     timestamps: true,

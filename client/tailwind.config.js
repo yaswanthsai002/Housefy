@@ -13,9 +13,10 @@ export default {
         'nevan': ['Nevan', 'sans-serif'],
       },
       backgroundImage: {
-
-        "signin-0": "url('images/pexels-quang-nguyen-vinh-222549-2131772.jpg')",
-        "signin-1": "url('images/pexels-eberhardgross-1612351.jpg')",
+        "signin-bg": "url('images/signin-bg.webp')",
+        "signup-bg": "url('images/signup-bg.webp')",
+        "blurred-signin-bg": "url('images/signup-blurred.webp')",
+        "blurred-signup-bg": "url('images/signup-blurred.webp')",
       }
     },
   },
