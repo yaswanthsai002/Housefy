@@ -1,15 +1,15 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Link, useNavigate } from "react-router-dom";
-import facebookIcon from "/icons/facebook-icon.svg";
-import googleIcon from "/icons/google-icon.svg";
+// import facebookIcon from "/icons/facebook-icon.svg";
 import { useState, useEffect } from "react";
 import signinBg from "/images/signin-bg.webp";
 import signinBlurred from "/images/signin-blurred.webp";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { siginInSuccess } from "../redux/features/userSlice.js";
+import { signInSuccess } from "../redux/features/userSlice.js";
 import { Navigate } from "react-router-dom";
+import GoogleOAuth from "@components/GoogleOAuth.jsx";
 const Signin = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -58,7 +58,7 @@ const Signin = () => {
         toast.error(jsonResponse.message);
         return;
       }
-      dispatch(siginInSuccess(jsonResponse.user));
+      dispatch(signInSuccess(jsonResponse.user));
       navigate("/");
       toast.success("Login Successful, Welcome to Housefy");
     } catch (err) {
@@ -163,22 +163,8 @@ const Signin = () => {
             </Link>
           </p>
           <hr className="border-t-2 border-white h-[2px] w-full" />
-          <a
-            href="https://www.google.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center w-full p-2 font-semibold bg-white rounded-md gap-x-4 hover:opacity-75"
-          >
-            <img
-              src={googleIcon}
-              alt="Google Icon"
-              className="w-5 h-5 md:h-8 md:w-8"
-            />
-            <span className="md:w-[60%] w-[75%] md:text-base text-sm">
-              Signin With Google
-            </span>
-          </a>
-          <a
+          <GoogleOAuth />
+          {/* <a
             href="https://www.facebook.com/"
             target="_blank"
             rel="noopener noreferrer"
@@ -192,7 +178,7 @@ const Signin = () => {
             <span className="md:w-[60%] w-[75%] md:text-base text-sm">
               Signin With Facebook
             </span>
-          </a>
+          </a> */}
         </form>
       </div>
     </div>

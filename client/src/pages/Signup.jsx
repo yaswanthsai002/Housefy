@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import facebookIcon from "/icons/facebook-icon.svg";
-import googleIcon from "/icons/google-icon.svg";
+// import facebookIcon from "/icons/facebook-icon.svg";
 import signupBg from "/images/signup-bg.webp";
 import signupBlurred from "/images/signup-blurred.webp";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import GoogleOAuth from "../components/GoogleOAuth";
 const Signup = () => {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -183,22 +183,8 @@ const Signup = () => {
             </Link>
           </p>
           <hr className="border-t-2 border-white h-[2px] w-full" />
-          <a
-            href="https://www.google.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center w-full p-2 font-semibold bg-white rounded-md gap-x-4 hover:opacity-75"
-          >
-            <img
-              src={googleIcon}
-              alt="Google Icon"
-              className="w-5 h-5 md:h-8 md:w-8"
-            />
-            <span className="md:w-[60%] w-[75%] md:text-base text-sm">
-              Signup With Google
-            </span>
-          </a>
-          <a
+          <GoogleOAuth />
+          {/* <a
             href="https://www.facebook.com/"
             target="_blank"
             rel="noopener noreferrer"
@@ -212,7 +198,7 @@ const Signup = () => {
             <span className="md:w-[60%] w-[75%] md:text-base text-sm">
               Signup With Facebook
             </span>
-          </a>
+          </a> */}
         </form>
       </div>
     </div>

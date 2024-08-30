@@ -8,7 +8,7 @@ config();
 const secretKey = process.env.SECRET_KEY;
 const saltRounds = parseInt(process.env.NO_OF_SALT_ROUNDS);
 
-export const signinAPI = async (req, res, next) => {
+export const signInAPI = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -32,7 +32,7 @@ export const signinAPI = async (req, res, next) => {
       algorithm: "HS512",
     });
 
-    const {password: userPassword, ...restUserInfo} = user._doc;
+    const { password: userPassword, ...restUserInfo } = user._doc;
 
     res
       .cookie("jwt_token", jwtToken, { httpOnly: true })
@@ -44,7 +44,7 @@ export const signinAPI = async (req, res, next) => {
   }
 };
 
-export const signupAPI = async (req, res, next) => {
+export const signUpAPI = async (req, res, next) => {
   try {
     const { firstName, lastName, email, password } = req.body;
     const existingUser = await User.findOne({ email });
@@ -71,5 +71,60 @@ export const signupAPI = async (req, res, next) => {
   } catch (err) {
     console.error("Error in signing up", err);
     return next({ statusCode: 500, message: "Error occurred in signing up" });
+  }
+};
+
+export const googleSignInAPI = async (req, res, next) => {
+  try {
+    const { name, email, photoURL } = req.body;
+    const user = await User.findOne({ email });
+    if (user) {
+      const jwtToken = jwt.sign({ id: user._id }, secretKey, {
+        expiresIn: "1day",
+        algorithm: "HS512",
+      });
+      const { password: userPassword, ...restUserInfo } = user._doc;
+      res
+        .cookie("jwt_token", jwtToken, { httpOnly: true })
+        .status(200)
+        .json({ message: "Welcome to Housefy", user: restUserInfo });
+    } else {
+      const splitNames = name.split(" ");
+      let firstName;
+      let lastName;
+      if (splitNames.length > 0) {
+        [firstName, lastName] = splitNames;
+      } else {
+        firstName = lastName = splitNames;
+      }
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const combinedPassword = generatedPassword + secretKey;
+      const hashedPassword = await bcrypt.hash(combinedPassword, saltRounds);
+      const newUser = User({
+        firstName,
+        lastName,
+        email,
+        password: hashedPassword,
+        profilePhotoURL: photoURL,
+      });
+      await newUser.save();
+      const jwtToken = jwt.sign({ id: newUser._id }, secretKey, {
+        expiresIn: "1day",
+        algorithm: "HS512",
+      });
+      const { password: userPassword, ...restUserInfo } = newUser._doc;
+      res
+        .cookie("jwt_token", jwtToken, { httpOnly: true })
+        .status(200)
+        .json({ message: "Welcome to Housefy", user: restUserInfo });
+    }
+  } catch (error) {
+    console.error("Error in google signin", error);
+    return next({
+      statusCode: 500,
+      message: "Error occurred in google signin",
+    });
   }
 };
