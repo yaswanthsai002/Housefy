@@ -6,7 +6,8 @@ import signupBg from "/images/signup-bg.webp";
 import signupBlurred from "/images/signup-blurred.webp";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
-
+import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 const Signup = () => {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -18,7 +19,7 @@ const Signup = () => {
   const [bgImageLoaded, setBgImageLoaded] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
+  const currentUser = useSelector((state) => state.user.currentUser);
   useEffect(() => {
     const img = new Image();
     img.src = signupBg;
@@ -89,7 +90,9 @@ const Signup = () => {
     }
   };
 
-  return (
+  return currentUser ? (
+    <Navigate to="/" />
+  ) : (
     <div
       className={`flex items-center justify-center min-h-[calc(100vh-64px)] bg-center bg-no-repeat bg-cover transition-all duration-500 ease-in-out ${
         bgImageLoaded ? "bg-signup" : "bg-placeholder"

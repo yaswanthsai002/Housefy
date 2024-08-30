@@ -31,10 +31,13 @@ export const signinAPI = async (req, res, next) => {
       expiresIn: "1day",
       algorithm: "HS512",
     });
+
+    const {password: userPassword, ...restUserInfo} = user._doc;
+
     res
       .cookie("jwt_token", jwtToken, { httpOnly: true })
       .status(200)
-      .json({ message: "Welcome to Housefy" });
+      .json({ message: "Welcome to Housefy", user: restUserInfo });
   } catch (err) {
     console.error("Error in signing in", err);
     return next({ statusCode: 500, message: "Error occurred in signing in" });

@@ -7,6 +7,9 @@ import signinBg from "/images/signin-bg.webp";
 import signinBlurred from "/images/signin-blurred.webp";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { siginInSuccess } from "../redux/features/userSlice.js";
+import { Navigate } from "react-router-dom";
 const Signin = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -15,6 +18,9 @@ const Signin = () => {
   const [loading, setLoading] = useState(false);
   const [bgImageLoaded, setBgImageLoaded] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.user.user.currentUser);
+  console.log("Current User Signin", currentUser);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,8 +58,9 @@ const Signin = () => {
         toast.error(jsonResponse.message);
         return;
       }
+      dispatch(siginInSuccess(jsonResponse.user));
+      navigate("/");
       toast.success("Login Successful, Welcome to Housefy");
-      navigate("");
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -61,7 +68,10 @@ const Signin = () => {
       setLoading(false);
     }
   };
-  return (
+
+  return currentUser ? (
+    <Navigate to="/" />
+  ) : (
     <div
       className={`flex items-center justify-center min-h-[calc(100vh-64px)] bg-center bg-no-repeat bg-cover transition-all duration-500 ease-in-out ${
         bgImageLoaded ? "bg-signup" : "bg-placeholder"
