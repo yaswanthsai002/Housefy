@@ -19,7 +19,7 @@ const Signup = () => {
   const [bgImageLoaded, setBgImageLoaded] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const currentUser = useSelector((state) => state.user.currentUser);
+  const { currentUser } = useSelector((state) => state.user);
   useEffect(() => {
     const img = new Image();
     img.src = signupBg;
@@ -94,7 +94,7 @@ const Signup = () => {
     <Navigate to="/" />
   ) : (
     <div
-      className={`flex items-center justify-center min-h-[calc(100vh-64px)] bg-center bg-no-repeat bg-cover transition-all duration-500 ease-in-out ${
+      className={`flex items-center justify-center md:min-h-[calc(100vh-80px)] min-h-[calc(100vh-64px)] bg-center bg-no-repeat bg-cover transition-all duration-500 ease-in-out ${
         bgImageLoaded ? "bg-signup" : "bg-placeholder"
       }`}
       style={{

@@ -6,9 +6,12 @@ import ProtectedRoutes from "./utils/ProtectedRoutes";
 
 const Signin = lazy(() => import("@pages/Signin"));
 const Home = lazy(() => import("@pages/Home"));
+const Explore = lazy(() => import("@pages/Explore"));
+const Profile = lazy(() => import("@pages/Profile"));
+const Listings = lazy(() => import("@pages/Listings"));
 const Signup = lazy(() => import("@pages/Signup"));
 
-const App = () => {  
+const App = () => {
   return (
     <BrowserRouter>
       <Header />
@@ -16,10 +19,19 @@ const App = () => {
         <Route element={<ProtectedRoutes />}>
           <Route
             exact
-            path="/"
+            path="/profile"
             element={
               <Suspense fallback={<Loader />}>
-                <Home />
+                <Profile />
+              </Suspense>
+            }
+          />
+          <Route
+            exact
+            path="/listings"
+            element={
+              <Suspense fallback={<Loader />}>
+                <Listings />
               </Suspense>
             }
           />
@@ -39,6 +51,24 @@ const App = () => {
           element={
             <Suspense fallback={<Loader />}>
               <Signup />
+            </Suspense>
+          }
+        />
+        <Route
+          exact
+          path="/"
+          element={
+            <Suspense fallback={<Loader />}>
+              <Home />
+            </Suspense>
+          }
+        />
+        <Route
+          exact
+          path="/explore"
+          element={
+            <Suspense fallback={<Loader />}>
+              <Explore />
             </Suspense>
           }
         />

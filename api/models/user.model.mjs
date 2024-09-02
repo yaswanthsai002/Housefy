@@ -22,9 +22,9 @@ const userSchema = mongoose.Schema(
       required: [true, "Password cannot be empty"],
       trim: true,
     },
-    proflePhotoURL: {
+    profilePhotoURL: {
       type: String,
-      default: "/images/default_profile_picture.jpg",
+      default: "/images/default_profile_picture_1.jpg",
     },
     // age: {
     //   type: Number,

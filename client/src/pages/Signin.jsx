@@ -8,6 +8,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { signInSuccess } from "../redux/features/userSlice.js";
+import { setActiveTab } from "../redux/features/navBarSlice.js";
 import { Navigate } from "react-router-dom";
 import GoogleOAuth from "@components/GoogleOAuth.jsx";
 const Signin = () => {
@@ -19,8 +20,7 @@ const Signin = () => {
   const [bgImageLoaded, setBgImageLoaded] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
-  const currentUser = useSelector((state) => state.user.user.currentUser);
-  console.log("Current User Signin", currentUser);
+  const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -59,8 +59,9 @@ const Signin = () => {
         return;
       }
       dispatch(signInSuccess(jsonResponse.user));
+      dispatch(setActiveTab("HOME"));
       navigate("/");
-      toast.success("Login Successful, Welcome to Housefy");
+      toast.success(`Welcome to Housefy, ${jsonResponse.user.firstName}`);
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -73,7 +74,7 @@ const Signin = () => {
     <Navigate to="/" />
   ) : (
     <div
-      className={`flex items-center justify-center min-h-[calc(100vh-64px)] bg-center bg-no-repeat bg-cover transition-all duration-500 ease-in-out ${
+      className={`flex items-center justify-center md:min-h-[calc(100vh-80px)] min-h-[calc(100vh-64px)]  bg-center bg-no-repeat bg-cover transition-all duration-500 ease-in-out ${
         bgImageLoaded ? "bg-signup" : "bg-placeholder"
       }`}
       style={{

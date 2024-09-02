@@ -1,10 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userReducer from "./features/userSlice";
+import navBarReducer from "./features/navBarSlice";
+import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import { persistReducer } from "redux-persist";
-import persistStore from "redux-persist/es/persistStore";
 
-const rootReducer = combineReducers({ user: userReducer });
+const rootReducer = combineReducers({ user: userReducer, navBar: navBarReducer });
 
 const persistConfig = {
   key: "root",
@@ -15,9 +15,7 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: {
-    user: persistedReducer,
-  },
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),
 });
