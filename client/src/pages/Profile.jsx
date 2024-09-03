@@ -1,11 +1,15 @@
 import { useSelector } from "react-redux";
-import { MdEdit } from "react-icons/md";
-import { FaSave } from "react-icons/fa";
-import { FaX } from "react-icons/fa6";
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useState } from "react";
 import { PhoneInput } from "react-international-phone";
 import CountrySelect from "@components/CountrySelect";
 import "react-international-phone/style.css";
+import {
+  PencilSquareIcon,
+  CheckIcon,
+  XMarkIcon,
+  ArrowUpTrayIcon,
+  TrashIcon
+} from "@heroicons/react/24/outline";
 
 const Profile = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -36,9 +40,6 @@ const Profile = () => {
     city: location.city,
   });
 
-  // Ref to keep track of previous formData
-  const prevFormDataRef = useRef(formData);
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -58,56 +59,73 @@ const Profile = () => {
     setLocation({ country, state, city });
   }, []);
 
-  useEffect(() => {
-    // Check if formData has changed compared to the previous state
-    if (JSON.stringify(prevFormDataRef.current) !== JSON.stringify(formData)) {
-      console.log("Form Data Changed:", formData);
-      // Update the ref with the current formData
-      prevFormDataRef.current = formData;
-    }
-  }, [formData]);
-
   return (
     <div className="flex justify-center w-full py-4">
       <div className="shadow-lg ring-1 ring-black p-4 rounded-lg ring-opacity-25 xl:w-[55%] w-[80%] gap-y-4 flex flex-col">
-        <div className="flex md:flex-row flex-col justify-between items-center">
+        <div className="flex justify-between items-center md:px-4 px-2 py-2 gap-x-4">
+          <h1 className="text-2xl md:text-4xl font-bold font-urbanist text-slate-800">
+            {changeDetails ? "Edit Profile" : "Profile"}
+          </h1>
+          {!changeDetails && (
+            <button
+              type="button"
+              className="flex text-gray-800 hover:underline underline-offset-2 md:text-base text-sm"
+              onClick={() => setChangeDetails(true)}
+            >
+              <PencilSquareIcon className="size-5" />
+              Edit Details
+            </button>
+          )}
+          {changeDetails && (
+            <div className="flex justify-between items-center gap-x-4">
+              <button
+                type="button"
+                className="flex justify-between items-center text-gray-800 hover:underline underline-offset-2 md:text-base text-sm"
+                onClick={() => setChangeDetails(false)}
+              >
+                <CheckIcon className="size-5" />
+                Save
+              </button>
+              <button
+                type="button"
+                className="flex justify-between items-center text-gray-800 hover:underline underline-offset-2 md:text-base text-sm"
+                onClick={() => setChangeDetails(false)}
+              >
+                <XMarkIcon className="size-5" />
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+        <div className="flex md:flex-row flex-col justify-between items-start">
           <div className="p-4 md:w-[35%] w-full flex flex-col gap-y-4 justify-center items-center">
-            <h1 className="text-4xl font-bold font-urbanist text-slate-800">
-              Edit Profile
-            </h1>
             <img
               src={profilePhotoURL}
               alt="profile photo"
               className="w-[200px] h-[200px] rounded-full"
             />
-            {!changePhoto && (
-              <button
-                type="button"
-                className="flex justify-between items-center gap-x-2 text-white py-1 px-2 rounded-md bg-slate-800 hover:bg-white border-2 border-transparent hover:text-slate-800 hover:border-slate-800 transition-colors ease-out duration-200"
-                onClick={() => setChangePhoto(true)}
-              >
-                <MdEdit /> Edit
-              </button>
-            )}
-            {changePhoto && (
+            {changeDetails && (
               <div className="flex justify-between items-center gap-x-4">
                 <button
                   type="button"
-                  className="flex justify-between items-center gap-x-2 text-white py-1 px-2 rounded-md bg-slate-800 hover:bg-white border-2 border-transparent hover:text-slate-800 hover:border-slate-800 transition-colors ease-out duration-200"
-                  onClick={() => setChangePhoto(false)}
+                  className="flex items-center text-gray-800 hover:underline gap-x-1 underline-offset-2 md:text-base text-sm"
+                  // onClick={() => setChangePhoto(false)}
                 >
-                  <FaSave /> Save
+                  <ArrowUpTrayIcon className="size-4" />
+                  Upload
                 </button>
                 <button
                   type="button"
-                  className="flex justify-between items-center gap-x-2 text-white py-1 px-2 rounded-md bg-slate-800 hover:bg-white border-2 border-transparent hover:text-slate-800 hover:border-slate-800 transition-colors ease-out duration-200"
-                  onClick={() => setChangePhoto(false)}
+                  className="flex items-center text-gray-800 hover:underline gap-x-1 underline-offset-2 md:text-base text-sm"
+                  // onClick={() => setChangePhoto(false)}
                 >
-                  <FaX /> Cancel
+                  <TrashIcon className="size-4" />
+                  Delete
                 </button>
               </div>
             )}
           </div>
+
           <form className="md:w-[60%] w-full flex flex-col items-start gap-y-4 px-4 py-2">
             <div className="flex lg:flex-row flex-col justify-between items-center xl:gap-x-8 lg:gap-x-4 gap-y-4 lg:gap-y-0 w-full">
               <div className="flex flex-col justify-between items-start gap-y-1 lg:w-auto w-full">
@@ -121,6 +139,7 @@ const Profile = () => {
                   onChange={handleInputChange}
                   name="firstName"
                   className="bg-gray-100 p-2 border-2 border-gray-400 rounded-md outline-none w-full"
+                  disabled={!changeDetails}
                 />
               </div>
               <div className="flex flex-col justify-between items-start gap-y-1 lg:w-auto w-full">
@@ -134,6 +153,7 @@ const Profile = () => {
                   onChange={handleInputChange}
                   name="lastName"
                   className="bg-gray-100 p-2 border-2 border-gray-400 rounded-md outline-none w-full"
+                  disabled={!changeDetails}
                 />
               </div>
             </div>
@@ -161,7 +181,8 @@ const Profile = () => {
                 onChange={handleInputChange}
                 name="dateOfBirth"
                 placeholder=""
-                className="bg-gray-100 p-2 border-2 border-gray-400 rounded-md outline-none w-full cursor-pointer"
+                className="bg-gray-100 p-2 border-2 border-gray-400 rounded-md outline-none w-full"
+                disabled={!changeDetails}
               />
             </div>
             <div className="flex flex-col justify-between items-start gap-y-1 w-full">
@@ -175,6 +196,7 @@ const Profile = () => {
                 name="mobile"
                 forceDialCode={true}
                 onChange={handlePhoneChange}
+                disabled={!changeDetails}
               />
             </div>
             <div className="flex flex-col justify-between items-start gap-y-1 w-full">
@@ -194,6 +216,7 @@ const Profile = () => {
                       value={gender.id}
                       onChange={handleInputChange}
                       className="cursor-pointer w-4 h-4"
+                      disabled={!changeDetails}
                     />
                     <label
                       htmlFor={gender.id}
@@ -205,7 +228,7 @@ const Profile = () => {
                 ))}
               </div>
             </div>
-            <CountrySelect handleSetLocation={handleSetLocation} />
+            <CountrySelect handleSetLocation={handleSetLocation} changeDetails={changeDetails} />
           </form>
         </div>
       </div>
