@@ -1,15 +1,14 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { FaBars, FaX } from "react-icons/fa6";
 import SearchExplorer from "@components/SearchExplorer";
 import Navbar from "@components/Navbar";
 const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
-
+  const navRef = useRef(null);
   const handleShowMenu = () => {
-    setShowMenu(!showMenu)
-    const navBar = document.getElementById('navBar');
-    navBar.classList.toggle("scale-x-100");
+    setShowMenu(!showMenu);
+    navRef.current.classList.toggle("scale-x-100");
   }
   return (
     <header className="z-20 sticky top-0 flex items-center justify-between md:h-20 h-16 px-4 bg-white">
@@ -19,7 +18,7 @@ const Header = () => {
         </h1>
       </Link>
       <SearchExplorer />
-      <Navbar />
+      <Navbar navRef={navRef} />
       <button
         type="button"
         onClick={handleShowMenu}

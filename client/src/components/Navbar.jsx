@@ -8,7 +8,7 @@ import { setActiveTab } from "../redux/features/navBarSlice.js";
 import { FaArrowRight } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import DropdownMenu from "@components/DropdownMenu";
-const Navbar = () => {
+const Navbar = ({ navRef }) => {
   const { currentUser } = useSelector((state) => state.user);
   const { activeTab } = useSelector((state) => state.navBar);
   const [isOpen, setIsOpen] = useState(false);
@@ -23,6 +23,7 @@ const Navbar = () => {
     <nav
       className="flex flex-col md:flex-row md:items-center w-full md:h-auto h-[calc(100vh-64px)] xl:w-[25%] lg:w-[35%] md:w-[40%] gap-x-4 absolute md:relative top-16 md:top-0 md:p-0 gap-y-4 md:gap-y-0 items-start bg-white md:bg-transparent scale-x-0 md:scale-x-100 origin-right left-0 transition-transform ease-in-out duration-200 md:justify-evenly justify-between p-4"
       id="navBar"
+      ref={navRef}
     >
       <div className="flex flex-col md:flex-row gap-y-4 items-start justify-between w-[40%] xl:w-[45%]">
         <Link
