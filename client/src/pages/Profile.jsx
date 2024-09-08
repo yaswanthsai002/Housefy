@@ -1,9 +1,11 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useCallback, useState, useRef } from "react";
 import { PhoneInput } from "react-international-phone";
 import CountrySelect from "@components/CountrySelect";
 import ImageDragDropBrowseModal from "@components/ImageDragDropBrowseModal";
 import "react-international-phone/style.css";
+import defaultProfilePicture from "/icons/default-profile-picture.svg"
+// import {updateUserProfile} from '../redux/features/userSlice.js'
 import {
   PencilSquareIcon,
   CheckIcon,
@@ -14,26 +16,32 @@ import {
 
 const Profile = () => {
   const { currentUser } = useSelector((state) => state.user);
+
+  // const dispatch = useDispatch();
+  
   const [showModal, setShowModal] = useState(false);
+  
   const fileRef = useRef(null);
+  
   const [location, setLocation] = useState({
     country: null,
     state: null,
     city: null,
   });
+  
   const [changeDetails, setChangeDetails] = useState(false);
-  const { firstName, lastName, email, profilePhotoURL } = currentUser;
+  
   const genderList = [
     { id: "male", displayText: "Male" },
     { id: "female", displayText: "Female" },
     { id: "others", displayText: "Others" },
   ];
 
-  const [formData, setFormData] = useState({
-    firstName,
-    lastName,
-    email,
-    profilePhotoURL,
+  const [initialFormData, setInitialFormData] = useState({
+    firstName: currentUser.firstName,
+    lastName: currentUser.lastName,
+    email: currentUser.email,
+    profilePhotoURL: currentUser.profilePhotoURL,
     mobile: "",
     gender: "",
     dateOfBirth: "",
@@ -42,16 +50,18 @@ const Profile = () => {
     city: location.city,
   });
 
+  const [formData, setFormData] = useState(initialFormData);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
+    setInitialFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
   const handlePhoneChange = (value) => {
-    setFormData((prevData) => ({
+    setInitialFormData((prevData) => ({
       ...prevData,
       mobile: value,
     }));
@@ -59,8 +69,34 @@ const Profile = () => {
 
   const handleSetLocation = useCallback((country, state, city) => {
     setLocation({ country, state, city });
+    setFormData((prevData) => ({
+      ...prevData,
+      country,
+      state,
+      city,
+    }));
   }, []);
 
+  const handleProfilePhotoChange = (imageURL) => {
+    setInitialFormData((prevData) => {
+      return {
+        ...prevData,
+        profilePhotoURL: imageURL !== '' ? imageURL : defaultProfilePicture,
+      };
+    });
+  };
+
+  const handleCancel = () => {
+    setFormData(initialFormData);
+    setChangeDetails(false);
+  }
+
+  const handleSave = () => {
+    // dispatch(updateUserProfile(formData));
+    setInitialFormData(formData);
+    setChangeDetails(false);
+  }
+  
   return (
     <>
       <div className="flex justify-center w-full py-4">
@@ -84,7 +120,7 @@ const Profile = () => {
                 <button
                   type="button"
                   className="flex justify-between items-center text-gray-800 hover:underline underline-offset-2 md:text-base text-sm"
-                  onClick={() => setChangeDetails(false)}
+                  onClick={handleSave}
                 >
                   <CheckIcon className="size-5" />
                   Save
@@ -92,7 +128,7 @@ const Profile = () => {
                 <button
                   type="button"
                   className="flex justify-between items-center text-gray-800 hover:underline underline-offset-2 md:text-base text-sm"
-                  onClick={() => setChangeDetails(false)}
+                  onClick={handleCancel}
                 >
                   <XMarkIcon className="size-5" />
                   Cancel
@@ -103,7 +139,7 @@ const Profile = () => {
           <div className="flex md:flex-row flex-col justify-between items-start">
             <div className="p-4 md:w-[35%] w-full flex flex-col gap-y-4 justify-center items-center">
               <img
-                src={profilePhotoURL}
+                src={initialFormData.profilePhotoURL}
                 alt="profile photo"
                 className="w-[200px] h-[200px] rounded-full"
               />
@@ -120,7 +156,7 @@ const Profile = () => {
                   <button
                     type="button"
                     className="flex items-center text-gray-800 hover:underline gap-x-1 underline-offset-2 md:text-base text-sm"
-                    // onClick={() => setChangePhoto(false)}
+                    onClick={() => handleProfilePhotoChange('')}
                   >
                     <TrashIcon className="size-4" />
                     Delete
@@ -137,7 +173,7 @@ const Profile = () => {
                   </label>
                   <input
                     type="text"
-                    value={formData.firstName}
+                    value={initialFormData.firstName}
                     id="firstName"
                     onChange={handleInputChange}
                     name="firstName"
@@ -151,7 +187,7 @@ const Profile = () => {
                   </label>
                   <input
                     type="text"
-                    value={formData.lastName}
+                    value={initialFormData.lastName}
                     id="lastName"
                     onChange={handleInputChange}
                     name="lastName"
@@ -166,7 +202,7 @@ const Profile = () => {
               </label>
               <input
                 type="text"
-                value={formData.email}
+                value={initialFormData.email}
                 id="email"
                 onChange={handleInputChange}
                 name="email"
@@ -179,7 +215,7 @@ const Profile = () => {
                 </label>
                 <input
                   type="date"
-                  value={formData.dateOfBirth}
+                  value={initialFormData.dateOfBirth}
                   id="dateOfBirth"
                   onChange={handleInputChange}
                   name="dateOfBirth"
@@ -194,7 +230,7 @@ const Profile = () => {
                 </label>
                 <PhoneInput
                   defaultCountry="in"
-                  value={formData.mobile}
+                  value={initialFormData.mobile}
                   id="mobile"
                   name="mobile"
                   forceDialCode={true}
@@ -243,6 +279,7 @@ const Profile = () => {
         showModal={showModal}
         setShowModal={setShowModal}
         fileRef={fileRef}
+        handleProfilePhotoChange={handleProfilePhotoChange}
       />
     </>
   );

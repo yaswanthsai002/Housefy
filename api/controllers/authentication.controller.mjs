@@ -35,7 +35,11 @@ export const signInAPI = async (req, res, next) => {
     const { password: userPassword, ...restUserInfo } = user._doc;
 
     res
-      .cookie("jwt_token", jwtToken, { httpOnly: true })
+      .cookie("jwt_token", jwtToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "Strict",
+      })
       .status(200)
       .json({ message: "Welcome to Housefy", user: restUserInfo });
   } catch (err) {
@@ -126,5 +130,19 @@ export const googleSignInAPI = async (req, res, next) => {
       statusCode: 500,
       message: "Error occurred in google signin",
     });
+  }
+};
+
+export const validateSessionAPI = async (req, res, next) => {
+  const token = req.cookies?.jwt_token;
+  if (!token) {
+    return res.json({ isValid: false });
+  }
+
+  try {
+    const decoded = jwt.verify(token, secretKey);
+    return res.json({ isValid: true });
+  } catch (error) {
+    return res.json({ isValid: false });
   }
 };

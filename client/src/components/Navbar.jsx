@@ -1,24 +1,27 @@
 /* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { signOutSuccess } from "../redux/features/userSlice.js";
 import { setActiveTab } from "../redux/features/navBarSlice.js";
 import { FaArrowRight } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import DropdownMenu from "@components/DropdownMenu";
+import useSessionValidation from "../hooks/useSessionValidation.js";
 const Navbar = ({ navRef }) => {
   const { currentUser } = useSelector((state) => state.user);
   const { activeTab } = useSelector((state) => state.navBar);
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
+  const {isTokenValid} = useSessionValidation(currentUser);
   const handleSignout = () => {
     toast.success("Successfully Logged Out!!!");
     setIsOpen(false);
     setActiveTab(null);
-    dispatch(signOutSuccess());
+    dispatch(signOutSuccess()); // Clear user data
+    dispatch(setActiveTab(null)); // Clear active tab
   };
+
   return (
     <nav
       className="flex flex-col md:flex-row md:items-center w-full md:h-auto h-[calc(100vh-64px)] xl:w-[25%] lg:w-[35%] md:w-[40%] gap-x-4 absolute md:relative top-16 md:top-0 md:p-0 gap-y-4 md:gap-y-0 items-start bg-white md:bg-transparent scale-x-0 md:scale-x-100 origin-right left-0 transition-transform ease-in-out duration-200 md:justify-evenly justify-between p-4"
@@ -44,7 +47,7 @@ const Navbar = ({ navRef }) => {
         >
           Explore
         </Link>
-        {currentUser && (
+        {isTokenValid && currentUser && (
           <>
             <Link
               to="/profile"
@@ -67,17 +70,15 @@ const Navbar = ({ navRef }) => {
           </>
         )}
       </div>
-      {currentUser && (
-        <button
-          type="button"
-          className="p-2 text-center text-white transition duration-200 ease-in-out border-2 border-transparent rounded-sm text-md bg-slate-800 hover:border-slate-900 hover:text-slate-900 hover:bg-transparent md:hidden flex justify-between items-center gap-x-2 mb-4"
-          onClick={handleSignout}
-        >
-          Sign out <FaArrowRight fill="#fff" />
-        </button>
-      )}
-      {currentUser ? (
+      {isTokenValid && currentUser ? (
         <>
+          <button
+            type="button"
+            className="p-2 text-center text-white transition duration-200 ease-in-out border-2 border-transparent rounded-sm text-md bg-slate-800 hover:border-slate-900 hover:text-slate-900 hover:bg-transparent md:hidden flex justify-between items-center gap-x-2 mb-4"
+            onClick={handleSignout}
+          >
+            Sign out <FaArrowRight fill="#fff" />
+          </button>
           <button
             type="button"
             className="md:block hidden border-none outline-none"

@@ -1,11 +1,17 @@
 import { Outlet, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import Cookies from "js-cookie"
+import { TailSpin } from "react-loader-spinner";
+import useSessionValidation from "../hooks/useSessionValidation";
+
 const ProtectedRoutes = () => {
-  const {currentUser} = useSelector((state) => state.user);
-  const jwtToken = Cookies.get("jwt_token");
-  // console.log('Token', jwtToken);
-  return currentUser ? <Outlet /> : <Navigate to="/signin" />;
+  const { currentUser } = useSelector((state) => state.user);
+  const {isTokenValid, isLoading} = useSessionValidation(currentUser);
+  if (isLoading === null)
+    return <TailSpin />;
+  if (isLoading) {
+    return <TailSpin />;
+  }
+  return isTokenValid ? <Outlet /> : <Navigate to="/signin" replace />;
 };
 
 export default ProtectedRoutes;

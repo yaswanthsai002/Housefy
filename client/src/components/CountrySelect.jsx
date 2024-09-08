@@ -11,10 +11,22 @@ import { City, Country, State } from "country-state-city";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 
-const Dropdown = ({ label, value, options, onChange, setQuery, changeDetails }) => (
+const Dropdown = ({
+  label,
+  value,
+  options,
+  onChange,
+  setQuery,
+  changeDetails,
+}) => (
   <div className="flex flex-col justify-between items-start gap-y-1 w-full">
     <p className="font-semibold">{label}</p>
-    <Combobox value={value} onChange={onChange} onClose={() => setQuery("")} disabled={!changeDetails}>
+    <Combobox
+      value={value}
+      onChange={onChange}
+      onClose={() => setQuery("")}
+      disabled={!changeDetails}
+    >
       <div className="relative w-full">
         <ComboboxInput
           className={clsx(
