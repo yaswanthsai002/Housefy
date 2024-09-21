@@ -24,7 +24,7 @@ const userSchema = mongoose.Schema(
     },
     profilePhotoURL: {
       type: String,
-      default: "/images/default_profile_picture_1.jpg",
+      default: "/icons/default-profile-picture.svg",
     },
     // age: {
     //   type: Number,

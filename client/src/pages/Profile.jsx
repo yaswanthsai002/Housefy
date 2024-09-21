@@ -1,10 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useState, useRef, useEffect, useMemo } from "react";
 import { PhoneInput } from "react-international-phone";
 import CountrySelect from "@components/CountrySelect";
 import ImageDragDropBrowseModal from "@components/ImageDragDropBrowseModal";
 import "react-international-phone/style.css";
-import defaultProfilePicture from "/icons/default-profile-picture.svg"
+import defaultProfilePicture from "/icons/default-profile-picture.svg";
 // import {updateUserProfile} from '../redux/features/userSlice.js'
 import {
   PencilSquareIcon,
@@ -18,19 +18,21 @@ const Profile = () => {
   const { currentUser } = useSelector((state) => state.user);
 
   // const dispatch = useDispatch();
-  
+
   const [showModal, setShowModal] = useState(false);
-  
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(null);
+
   const fileRef = useRef(null);
-  
+
   const [location, setLocation] = useState({
     country: null,
     state: null,
     city: null,
   });
-  
+
   const [changeDetails, setChangeDetails] = useState(false);
-  
+
   const genderList = [
     { id: "male", displayText: "Male" },
     { id: "female", displayText: "Female" },
@@ -38,10 +40,10 @@ const Profile = () => {
   ];
 
   const [initialFormData, setInitialFormData] = useState({
-    firstName: currentUser.firstName,
-    lastName: currentUser.lastName,
-    email: currentUser.email,
-    profilePhotoURL: currentUser.profilePhotoURL,
+    firstName: currentUser?.firstName || "",
+    lastName: currentUser?.lastName || "",
+    email: currentUser?.email || "",
+    profilePhotoURL: currentUser?.profilePhotoURL || defaultProfilePicture,
     mobile: "",
     gender: "",
     dateOfBirth: "",
@@ -54,14 +56,14 @@ const Profile = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setInitialFormData((prevData) => ({
+    setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
   const handlePhoneChange = (value) => {
-    setInitialFormData((prevData) => ({
+    setFormData((prevData) => ({
       ...prevData,
       mobile: value,
     }));
@@ -78,10 +80,10 @@ const Profile = () => {
   }, []);
 
   const handleProfilePhotoChange = (imageURL) => {
-    setInitialFormData((prevData) => {
+    setFormData((prevData) => {
       return {
         ...prevData,
-        profilePhotoURL: imageURL !== '' ? imageURL : defaultProfilePicture,
+        profilePhotoURL: imageURL !== "" ? imageURL : defaultProfilePicture,
       };
     });
   };
@@ -89,14 +91,14 @@ const Profile = () => {
   const handleCancel = () => {
     setFormData(initialFormData);
     setChangeDetails(false);
-  }
+  };
 
   const handleSave = () => {
     // dispatch(updateUserProfile(formData));
     setInitialFormData(formData);
     setChangeDetails(false);
-  }
-  
+  };
+
   return (
     <>
       <div className="flex justify-center w-full py-4">
@@ -139,24 +141,35 @@ const Profile = () => {
           <div className="flex md:flex-row flex-col justify-between items-start">
             <div className="p-4 md:w-[35%] w-full flex flex-col gap-y-4 justify-center items-center">
               <img
-                src={initialFormData.profilePhotoURL}
+                src={formData.profilePhotoURL}
                 alt="profile photo"
                 className="w-[200px] h-[200px] rounded-full"
               />
+              {isUploading && (
+                <p className="text-green-500">
+                  Image Uploading - {uploadProgress}%{" "}
+                </p>
+              )}
               {changeDetails && (
                 <div className="flex justify-between items-center gap-x-4">
                   <button
                     type="button"
-                    className="flex items-center text-gray-800 hover:underline gap-x-1 underline-offset-2 md:text-base text-sm"
+                    className={`flex items-center text-gray-800 hover:underline gap-x-1 underline-offset-2 md:text-base text-sm ${
+                      isUploading ? "cursor-not-allowed" : ""
+                    }`}
                     onClick={() => setShowModal(true)}
+                    disabled={isUploading}
                   >
                     <ArrowUpTrayIcon className="size-4" />
                     Upload
                   </button>
                   <button
                     type="button"
-                    className="flex items-center text-gray-800 hover:underline gap-x-1 underline-offset-2 md:text-base text-sm"
-                    onClick={() => handleProfilePhotoChange('')}
+                    className={`flex items-center text-gray-800 hover:underline gap-x-1 underline-offset-2 md:text-base text-sm ${
+                      isUploading ? "cursor-not-allowed" : ""
+                    }`}
+                    onClick={() => handleProfilePhotoChange("")}
+                    disabled={isUploading}
                   >
                     <TrashIcon className="size-4" />
                     Delete
@@ -173,7 +186,7 @@ const Profile = () => {
                   </label>
                   <input
                     type="text"
-                    value={initialFormData.firstName}
+                    value={formData.firstName}
                     id="firstName"
                     onChange={handleInputChange}
                     name="firstName"
@@ -187,7 +200,7 @@ const Profile = () => {
                   </label>
                   <input
                     type="text"
-                    value={initialFormData.lastName}
+                    value={formData.lastName}
                     id="lastName"
                     onChange={handleInputChange}
                     name="lastName"
@@ -196,26 +209,13 @@ const Profile = () => {
                   />
                 </div>
               </div>
-              {/* <div className="flex flex-col justify-between items-start gap-y-1 w-full">
-              <label htmlFor="email" className="font-semibold">
-                Email
-              </label>
-              <input
-                type="text"
-                value={initialFormData.email}
-                id="email"
-                onChange={handleInputChange}
-                name="email"
-                className="bg-gray-100 p-2 border-2 border-gray-400 rounded-md outline-none w-full"
-              />
-            </div> */}
               <div className="flex flex-col justify-between items-start gap-y-1 w-full">
                 <label htmlFor="dateOfBirth" className="font-semibold">
                   Date of Birth
                 </label>
                 <input
                   type="date"
-                  value={initialFormData.dateOfBirth}
+                  value={formData.dateOfBirth}
                   id="dateOfBirth"
                   onChange={handleInputChange}
                   name="dateOfBirth"
@@ -230,7 +230,7 @@ const Profile = () => {
                 </label>
                 <PhoneInput
                   defaultCountry="in"
-                  value={initialFormData.mobile}
+                  value={formData.mobile}
                   id="mobile"
                   name="mobile"
                   forceDialCode={true}
@@ -280,6 +280,8 @@ const Profile = () => {
         setShowModal={setShowModal}
         fileRef={fileRef}
         handleProfilePhotoChange={handleProfilePhotoChange}
+        setIsUploading={setIsUploading}
+        setUploadProgress={setUploadProgress}
       />
     </>
   );

@@ -1,12 +1,23 @@
-import { useRef, useState } from "react";
-
 /* eslint-disable react/prop-types */
+import { useRef, useState } from "react";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../../firebase.js";
+import { toast } from "react-toastify";
+
 const ImageDragDropBrowseModal = ({
   showModal,
   setShowModal,
   fileRef,
   handleProfilePhotoChange,
+  setIsUploading,
+  setUploadProgress,
 }) => {
+  const [imageFile, setImageFile] = useState(null);
   const [imageURL, setImageURL] = useState(null);
   const [imageFileName, setImageFileName] = useState(null);
 
@@ -14,14 +25,27 @@ const ImageDragDropBrowseModal = ({
   const browseTextRef = useRef(null);
   const containerRef = useRef(null);
 
+  const resetImageState = () => {
+    setImageFile(null);
+    setImageFileName(null);
+    setImageURL(null);
+  };
+
   const handleFileInputChange = () => {
     const imageFile = fileRef?.current.files[0];
-    if (imageFile && imageFile.type.startsWith("image/")) {
+    if (
+      imageFile &&
+      imageFile.type.startsWith("image/") &&
+      imageFile.size <= 2 * 1024 * 1024
+    ) {
+      setImageFile(imageFile);
       setImageURL(URL.createObjectURL(imageFile));
       setImageFileName(imageFile.name);
       browseTextRef.current.innerText = "Browse for an image";
     } else {
-      browseTextRef.current.innerText = "Please select a valid image file";
+      browseTextRef.current.innerText = imageFile
+        ? "Please select a valid image file under 2MB"
+        : "Please select a valid image file";
     }
   };
 
@@ -57,7 +81,35 @@ const ImageDragDropBrowseModal = ({
   };
 
   const handleSave = () => {
-    handleProfilePhotoChange(imageURL);
+    if (!imageFile) return;
+
+    const storage = getStorage(app);
+    const storageRef = ref(storage, `${new Date().getTime()}_${imageFileName}`);
+    const uploadTask = uploadBytesResumable(storageRef, imageFile);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setIsUploading(progress < 100);
+        setUploadProgress(Math.round(progress));
+        if (progress === 100) {
+          toast.success("Photo Uploaded Successfully");
+        }
+      },
+      (error) => {
+        setIsUploading(false);
+        setUploadProgress(null);
+        console.log("Error occurred while uploading", error);
+        toast.error("Error occurred while uploading");
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((dowloadURL) => {
+          handleProfilePhotoChange(dowloadURL);
+          resetImageState();
+        });
+      }
+    );
     setShowModal(false);
   };
 
