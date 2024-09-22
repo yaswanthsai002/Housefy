@@ -87,7 +87,8 @@ const Navbar = ({ navRef }) => {
             <img
               src={currentUser.profilePhotoURL}
               alt="profilePhoto"
-              className="w-14 h-14 rounded-full shadow-lg ring-2 ring-black p-1 ring-opacity-50"
+              className="size-10 rounded-full shadow-lg ring-2 ring-black ring-opacity-50"
+              loading="lazy"
             />
           </button>
           <DropdownMenu

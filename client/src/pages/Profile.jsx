@@ -22,7 +22,6 @@ const Profile = () => {
   const [showModal, setShowModal] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(null);
-  const [isloading, setIsLoading] = useState(false);
   const fileRef = useRef(null);
 
   const [location, setLocation] = useState({
@@ -95,7 +94,6 @@ const Profile = () => {
 
   const handleSave = async () => {
     try {
-      setIsLoading(true);
       const response = await fetch(`/api/user/update/${currentUser._id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -113,7 +111,6 @@ const Profile = () => {
       console.log("Error occured while updating", error);
       toast.error("Error occcured while updating");
     } finally {
-      setIsLoading(false);
       setChangeDetails(false);
     }
   };
@@ -163,6 +160,7 @@ const Profile = () => {
                 src={formData.profilePhotoURL}
                 alt="profile photo"
                 className="w-[200px] h-[200px] rounded-full"
+                loading="lazy"
               />
               {isUploading && (
                 <p className="text-green-500">
