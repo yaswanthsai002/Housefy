@@ -25,7 +25,7 @@ const Dropdown = ({
       value={value}
       onChange={onChange}
       onClose={() => setQuery("")}
-      disabled={!changeDetails}
+      disabled={changeDetails}
     >
       <div className="relative w-full">
         <ComboboxInput

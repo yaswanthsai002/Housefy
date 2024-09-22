@@ -8,7 +8,20 @@ const useSessionValidation = (currentUser) => {
   const [isTokenValid, setIsTokenValid] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
   const dispatch = useDispatch();
+
   useEffect(() => {
+    if (!currentUser) {
+      setIsTokenValid(false);
+      setIsLoading(false);
+      return;
+    }
+
+    const handleInvalidSession = () => {
+      setIsTokenValid(false);
+      dispatch(signOutSuccess());
+      dispatch(setActiveTab(null));
+    };
+
     const validateSession = async () => {
       setIsLoading(true);
       try {
@@ -16,32 +29,28 @@ const useSessionValidation = (currentUser) => {
           method: "GET",
           credentials: "include",
         });
+
         if (response.ok) {
           const jsonResponse = await response.json();
-          if (jsonResponse.isValid) {
-            setIsTokenValid(true);
-          } else {
-            toast.error("Session Expired. Please SignIn again.");
-            dispatch(signOutSuccess());
-            dispatch(setActiveTab(null));
-            setIsTokenValid(false);
+          setIsTokenValid(jsonResponse.isValid);
+          if (!jsonResponse.isValid) {
+            handleInvalidSession();
           }
         } else {
-          setIsTokenValid(false);
+          handleInvalidSession();
         }
       } catch (error) {
-        console.log("Session Validation Failed\n", error);
+        console.error("Session Validation Failed:", error);
         toast.error("Server error. Please try again.");
-        dispatch(signOutSuccess());
-        dispatch(setActiveTab(null));
-        setIsTokenValid(false);
+        handleInvalidSession();
       } finally {
         setIsLoading(false);
       }
     };
-    if (currentUser) validateSession();
-    else setIsTokenValid(false);
+
+    validateSession();
   }, [currentUser, dispatch]);
+
   return { isLoading, isTokenValid };
 };
 

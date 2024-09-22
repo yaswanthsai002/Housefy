@@ -26,13 +26,30 @@ const userSchema = mongoose.Schema(
       type: String,
       default: "/icons/default-profile-picture.svg",
     },
-    // age: {
-    //   type: Number,
-    //   min: 1,
-    //   max: 100,
-    //   required: [true, "Age is required"],
-    //   default: () => Math.floor(Math.random() * 100),
-    // },
+    country: {
+      type: String,
+      default: "",
+    },
+    state: {
+      type: String,
+      default: "",
+    },
+    city: {
+      type: String,
+      default: "",
+    },
+    mobile: {
+      type: String,
+      default: "",
+    },
+    dateOfBirth: {
+      type: Date,
+      default: null,
+    },
+    gender: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,

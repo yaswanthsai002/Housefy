@@ -3,6 +3,7 @@ import { config } from "dotenv";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/db.config.mjs";
 import authenticationRouter from './routes/authentication.routes.mjs'
+import userRouter from "./routes/user.routes.mjs"
 import errorHandler from "./middleware/error.middleware.mjs";
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(json());
 app.use(cookieParser());
 
 app.use('/api/auth', authenticationRouter);
+app.use('/api/user', userRouter);
 
 app.use(errorHandler)
 

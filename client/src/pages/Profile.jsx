@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useCallback, useState, useRef, useEffect, useMemo } from "react";
+import { useCallback, useState, useRef } from "react";
 import { PhoneInput } from "react-international-phone";
 import CountrySelect from "@components/CountrySelect";
 import ImageDragDropBrowseModal from "@components/ImageDragDropBrowseModal";
 import "react-international-phone/style.css";
 import defaultProfilePicture from "/icons/default-profile-picture.svg";
-// import {updateUserProfile} from '../redux/features/userSlice.js'
+import { updateUser } from "../redux/features/userSlice.js";
+import { toast } from "react-toastify";
 import {
   PencilSquareIcon,
   CheckIcon,
@@ -16,13 +17,12 @@ import {
 
 const Profile = () => {
   const { currentUser } = useSelector((state) => state.user);
-
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const [showModal, setShowModal] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(null);
-
+  const [isloading, setIsLoading] = useState(false);
   const fileRef = useRef(null);
 
   const [location, setLocation] = useState({
@@ -93,10 +93,29 @@ const Profile = () => {
     setChangeDetails(false);
   };
 
-  const handleSave = () => {
-    // dispatch(updateUserProfile(formData));
-    setInitialFormData(formData);
-    setChangeDetails(false);
+  const handleSave = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const jsonResponse = await response.json();
+      if (!response.ok) {
+        toast.error(jsonResponse.message);
+        return;
+      }
+      dispatch(updateUser(jsonResponse.user));
+      setInitialFormData(formData);
+      toast.success("Profile Updated Successfully");
+    } catch (error) {
+      console.log("Error occured while updating", error);
+      toast.error("Error occcured while updating");
+    } finally {
+      setIsLoading(false);
+      setChangeDetails(false);
+    }
   };
 
   return (

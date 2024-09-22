@@ -135,14 +135,20 @@ export const googleSignInAPI = async (req, res, next) => {
 
 export const validateSessionAPI = async (req, res, next) => {
   const token = req.cookies?.jwt_token;
+
   if (!token) {
-    return res.json({ isValid: false });
+    return next({ status: 401, message: "Unauthorized User", isValid: false });
   }
 
   try {
     const decoded = jwt.verify(token, secretKey);
-    return res.json({ isValid: true });
+    return res.json({ status: 200, isValid: true });
   } catch (error) {
-    return res.json({ isValid: false });
+    console.error("Token verification error:", error);
+    return next({
+      status: error.name === "TokenExpiredError" ? 401 : 500,
+      message: error.message,
+      isValid: false,
+    });
   }
 };
