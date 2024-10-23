@@ -6,6 +6,8 @@ import authenticationRouter from './routes/authentication.routes.mjs'
 import userRouter from "./routes/user.routes.mjs"
 import errorHandler from "./middleware/error.middleware.mjs";
 
+config();
+
 const app = express();
 const PORT = process.env.PORT;
 
@@ -18,8 +20,16 @@ app.use('/api/user', userRouter);
 
 app.use(errorHandler)
 
-app.listen(PORT, () => {
-    config();
-    connectDB();
-    console.log(`Server running on port http://localhost:${PORT}/`);
-});
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Server running on port http://localhost:${PORT}/`);
+    });
+  } catch (error) {
+    console.error("Failed to connect to the database:", error);
+    process.exit(1);
+  }
+};
+
+startServer();

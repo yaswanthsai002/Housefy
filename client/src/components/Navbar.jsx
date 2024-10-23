@@ -18,8 +18,8 @@ const Navbar = ({ navRef }) => {
     toast.success("Successfully Logged Out!!!");
     setIsOpen(false);
     setActiveTab(null);
-    dispatch(signOutSuccess()); // Clear user data
-    dispatch(setActiveTab(null)); // Clear active tab
+    dispatch(signOutSuccess());
+    dispatch(setActiveTab(null));
   };
 
   return (
