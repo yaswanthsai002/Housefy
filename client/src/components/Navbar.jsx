@@ -8,12 +8,14 @@ import { FaArrowRight } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import DropdownMenu from "@components/DropdownMenu";
 import useSessionValidation from "../hooks/useSessionValidation.js";
+import { privateNavTabs, publicNavTabs } from "../../constants.js";
+
 const Navbar = ({ navRef }) => {
   const { currentUser } = useSelector((state) => state.user);
   const { activeTab } = useSelector((state) => state.navBar);
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
-  const {isTokenValid} = useSessionValidation(currentUser);
+  const { isTokenValid } = useSessionValidation(currentUser);
   const handleSignout = () => {
     toast.success("Successfully Logged Out!!!");
     setIsOpen(false);
@@ -29,44 +31,32 @@ const Navbar = ({ navRef }) => {
       ref={navRef}
     >
       <div className="flex flex-col md:flex-row gap-y-4 items-start justify-between w-[40%] xl:w-[45%]">
-        <Link
-          to="/"
-          className={`text-base font-semibold text-center transition duration-1000 ease-in-out lg:text-lg text-md hover:underline underline-offset-2 ${
-            activeTab === "HOME" ? "underline" : ""
-          }`}
-          onClick={() => dispatch(setActiveTab("HOME"))}
-        >
-          Home
-        </Link>
-        <Link
-          to="/explore"
-          className={`text-base font-semibold text-center transition duration-1000 ease-in-out lg:text-lg text-md hover:underline underline-offset-2 ${
-            activeTab === "EXPLORE" ? "underline" : ""
-          }`}
-          onClick={() => dispatch(setActiveTab("EXPLORE"))}
-        >
-          Explore
-        </Link>
+        {publicNavTabs.map((tab) => (
+          <Link
+            key={tab.tabId}
+            to={tab.to}
+            className={`text-base font-semibold text-center transition duration-1000 ease-in-out lg:text-lg text-md hover:underline underline-offset-2 ${
+              activeTab === `${tab.tabId}` ? "underline" : ""
+            }`}
+            onClick={() => dispatch(setActiveTab(tab.tabId))}
+          >
+            {tab.tabDisplayText}
+          </Link>
+        ))}
         {isTokenValid && currentUser && (
           <>
-            <Link
-              to="/profile"
-              className={`text-base font-semibold text-center transition duration-1000 ease-in-out lg:text-lg text-md hover:underline underline-offset-2 md:hidden block ${
-                activeTab === "PROFILE" ? "underline" : ""
-              }`}
-              onClick={() => dispatch(setActiveTab("PROFILE"))}
-            >
-              View Profile
-            </Link>
-            <Link
-              to="/listings"
-              className={`text-base font-semibold text-center transition duration-1000 ease-in-out lg:text-lg text-md hover:underline underline-offset-2 md:hidden block ${
-                activeTab === "LISTINGS" ? "underline" : ""
-              }`}
-              onClick={() => dispatch(setActiveTab("LISTINGS"))}
-            >
-              View Listings
-            </Link>
+            {privateNavTabs.map((tab) => (
+              <Link
+                key={tab.tabId}
+                to={tab.to}
+                className={`text-base font-semibold text-center transition duration-1000 ease-in-out lg:text-lg text-md hover:underline underline-offset-2 md:hidden block ${
+                  activeTab === `${tab.tabId}` ? "underline" : ""
+                }`}
+                onClick={() => dispatch(setActiveTab(tab.tabId))}
+              >
+                {tab.tabDisplayText}
+              </Link>
+            ))}
           </>
         )}
       </div>

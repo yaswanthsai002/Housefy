@@ -8,6 +8,7 @@ import {
 } from "firebase/storage";
 import { app } from "../../firebase.js";
 import { toast } from "react-toastify";
+import { handleModalClick } from "../../constants.js";
 
 const ImageDragDropBrowseModal = ({
   showModal,
@@ -74,12 +75,6 @@ const ImageDragDropBrowseModal = ({
     }
   };
 
-  const handleModalClick = (e) => {
-    if (containerRef.current && !containerRef.current.contains(e.target)) {
-      setShowModal(false);
-    }
-  };
-
   const handleSave = () => {
     if (!imageFile) return;
 
@@ -117,7 +112,7 @@ const ImageDragDropBrowseModal = ({
     showModal && (
       <div
         className="fixed inset-0 min-h-screen bg-black bg-opacity-30 z-20 backdrop-blur-sm flex justify-center items-center"
-        onClick={handleModalClick}
+        onClick={(e) => handleModalClick(e, containerRef, setShowModal, false)}
         onDragOver={handleDragOver}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}

@@ -68,7 +68,7 @@ const Signup = () => {
 
     try {
       setLoading(true);
-      const response = await fetch("api/auth/signup/", {
+      const response = await fetch("/api/auth/signup/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -173,11 +173,11 @@ const Signup = () => {
           >
             {loading ? "Loading..." : "Sign Up"}
           </button>
-          <p className="text-sm text-white md:text-base">
+          <p className=" text-white text-[12px] md:text-sm">
             Already have an account?
             <Link
               to="/signin"
-              className="ml-1 text-sm text-white underline md:text-base underline-offset-2"
+              className="ml-1 text-[12px] md:text-sm text-white underline underline-offset-2"
             >
               SignIn
             </Link>

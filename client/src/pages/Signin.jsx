@@ -47,7 +47,7 @@ const Signin = () => {
     }
     try {
       setLoading(true);
-      const response = await fetch("api/auth/signin/", {
+      const response = await fetch("/api/auth/signin/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -154,11 +154,11 @@ const Signin = () => {
           >
             {loading ? "Loading..." : "Sign In"}
           </button>
-          <p className="self-start text-sm text-white">
+          <p className="self-start text-[12px] md:text-sm text-white">
             Don't have an account?
             <Link
               to="/signup"
-              className="ml-1 text-sm text-white underline underline-offset-2"
+              className="ml-1 text-[12px] md:text-sm text-white underline underline-offset-2"
             >
               Register
             </Link>

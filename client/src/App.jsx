@@ -9,6 +9,7 @@ const Home = lazy(() => import("@pages/Home"));
 const Explore = lazy(() => import("@pages/Explore"));
 const Profile = lazy(() => import("@pages/Profile"));
 const Listings = lazy(() => import("@pages/Listings"));
+const Settings = lazy(() => import("@pages/Settings"));
 const Signup = lazy(() => import("@pages/Signup"));
 
 const App = () => {
@@ -32,6 +33,15 @@ const App = () => {
             element={
               <Suspense fallback={<Loader />}>
                 <Listings />
+              </Suspense>
+            }
+          />
+          <Route
+            exact
+            path="/settings"
+            element={
+              <Suspense fallback={<Loader />}>
+                <Settings />
               </Suspense>
             }
           />

@@ -5,11 +5,14 @@ import connectDB from "./config/db.config.mjs";
 import authenticationRouter from './routes/authentication.routes.mjs'
 import userRouter from "./routes/user.routes.mjs"
 import errorHandler from "./middleware/error.middleware.mjs";
+import cors from "cors";
 
 config();
 
 const app = express();
 const PORT = process.env.PORT;
+
+app.use(cors());
 
 app.use(json());
 
