@@ -2,38 +2,71 @@ import User from "../models/user.model.mjs";
 import bcrypt from "bcrypt";
 
 const secretKey = process.env.SECRET_KEY;
+const saltRounds = process.env.SALT_ROUNDS;
 
 export const updateUser = async (req, res, next) => {
   if (req.user.id !== req.params.id) {
     return next({ status: 401, message: "Unauthorized User" });
   }
+
   try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return next({ status: 404, message: "No User Found" });
+    }
+
+    const {
+      firstName,
+      lastName,
+      dateOfBirth,
+      mobile,
+      gender,
+      country,
+      state,
+      city,
+      profilePhotoURL,
+      email,
+      password,
+    } = req.body;
+
+    const updates = {
+      firstName: firstName || user.firstName,
+      lastName: lastName || user.lastName,
+      dateOfBirth: dateOfBirth || user.dateOfBirth,
+      mobile: mobile || user.mobile,
+      gender: gender || user.gender,
+      country: country || user.country,
+      state: state || user.state,
+      city: city || user.city,
+      profilePhotoURL: profilePhotoURL || user.profilePhotoURL,
+      email: email || user.email,
+      password: password
+        ? await bcrypt.hash(password + secretKey, saltRounds)
+        : user.password,
+    };
+
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
-      {
-        $set: {
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          dateOfBirth: req.body.dateOfBirth,
-          mobile: req.body.mobile,
-          gender: req.body.gender,
-          country: req.body.country,
-          state: req.body.state,
-          city: req.body.city,
-          profilePhotoURL: req.body.profilePhotoURL,
-          email: req.body.email,
-        },
-      },
+      { $set: updates },
       { new: true }
     );
-    const { password: updatedUserPassword, __v, ...rest } = updatedUser._doc;
-    return res.status(200).json({ message: "Updated User", user: rest });
+
+    if (!updatedUser) {
+      return next({ status: 404, message: "User not found" });
+    }
+
+    const {
+      password: _,
+      __v,
+      createdAt,
+      updatedAt,
+      ...userData
+    } = updatedUser._doc;
+    console.log('User data', userData.dateOfBirth)
+    return res.status(200).json({ message: "User Updated", user: userData });
   } catch (err) {
-    console.error("Error occurred in updating user", err);
-    return next({
-      statusCode: 500,
-      message: "Error occurred in updating user",
-    });
+    console.error("Error occurred while updating user:", err);
+    return next({ status: 500, message: "Error occurred while updating user" });
   }
 };
 
@@ -90,7 +123,10 @@ export const disableUser = async (req, res, next) => {
       return next({ status: 404, message: "User not found" });
     }
 
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    const isPasswordMatch = await bcrypt.compare(
+      password + secretKey,
+      user.password
+    );
     if (!isPasswordMatch) {
       return next({ status: 401, message: "Invalid email or password" });
     }
