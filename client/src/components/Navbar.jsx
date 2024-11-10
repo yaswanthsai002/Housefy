@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
 import { signOutSuccess } from "../redux/features/userSlice.js";
@@ -15,11 +15,13 @@ const Navbar = ({ navRef }) => {
   const { activeTab } = useSelector((state) => state.navBar);
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate(null);
   const { isTokenValid } = useSessionValidation(currentUser);
   const handleSignout = () => {
     toast.success("Successfully Logged Out!!!");
     setIsOpen(false);
     setActiveTab(null);
+    navigate('/signin');
     dispatch(signOutSuccess());
     dispatch(setActiveTab(null));
   };

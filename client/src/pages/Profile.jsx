@@ -25,9 +25,9 @@ const Profile = () => {
   const fileRef = useRef(null);
 
   const [location, setLocation] = useState({
-    country: null,
-    state: null,
-    city: null,
+    country: currentUser.country || null,
+    state: currentUser.state || null,
+    city: currentUser.city || null,
   });
 
   const [changeDetails, setChangeDetails] = useState(false);
@@ -41,11 +41,12 @@ const Profile = () => {
   const [initialFormData, setInitialFormData] = useState({
     firstName: currentUser?.firstName || "",
     lastName: currentUser?.lastName || "",
-    email: currentUser?.email || "",
     profilePhotoURL: currentUser?.profilePhotoURL || defaultProfilePicture,
-    mobile: "",
-    gender: "",
-    dateOfBirth: "",
+    mobile: currentUser.mobile || "",
+    gender: currentUser.gender || "",
+    dateOfBirth: currentUser.dateOfBirth
+      ? currentUser.dateOfBirth.slice(0, currentUser.dateOfBirth.indexOf("T"))
+      : null,
     country: location.country,
     state: location.state,
     city: location.city,
@@ -198,7 +199,7 @@ const Profile = () => {
             <form className="md:w-[60%] w-full flex flex-col items-start gap-y-4 px-4 py-2">
               <div className="flex lg:flex-row flex-col justify-between items-center xl:gap-x-8 lg:gap-x-4 gap-y-4 lg:gap-y-0 w-full">
                 <div className="flex flex-col justify-between items-start gap-y-1 lg:w-auto w-full">
-                  <label htmlFor="firstName" className="font-semibold">
+                  <label htmlFor="firstName" className="font-semibold text-sm">
                     FirstName
                   </label>
                   <input
@@ -207,12 +208,12 @@ const Profile = () => {
                     id="firstName"
                     onChange={handleInputChange}
                     name="firstName"
-                    className="bg-gray-100 p-2 border-2 border-gray-400 rounded-md outline-none w-full"
+                    className="bg-gray-100 px-2 py-1 border-2 border-gray-400 rounded-md outline-none w-full"
                     disabled={!changeDetails}
                   />
                 </div>
                 <div className="flex flex-col justify-between items-start gap-y-1 lg:w-auto w-full">
-                  <label htmlFor="lastName" className="font-semibold">
+                  <label htmlFor="lastName" className="font-semibold text-sm">
                     LastName
                   </label>
                   <input
@@ -221,13 +222,13 @@ const Profile = () => {
                     id="lastName"
                     onChange={handleInputChange}
                     name="lastName"
-                    className="bg-gray-100 p-2 border-2 border-gray-400 rounded-md outline-none w-full"
+                    className="bg-gray-100 px-2 py-1 border-2 border-gray-400 rounded-md outline-none w-full"
                     disabled={!changeDetails}
                   />
                 </div>
               </div>
               <div className="flex flex-col justify-between items-start gap-y-1 w-full">
-                <label htmlFor="dateOfBirth" className="font-semibold">
+                <label htmlFor="dateOfBirth" className="font-semibold text-sm">
                   Date of Birth
                 </label>
                 <input
@@ -237,12 +238,12 @@ const Profile = () => {
                   onChange={handleInputChange}
                   name="dateOfBirth"
                   placeholder=""
-                  className="bg-gray-100 p-2 border-2 border-gray-400 rounded-md outline-none w-full"
+                  className="bg-gray-100 px-2 py-1 border-2 border-gray-400 rounded-md outline-none w-full"
                   disabled={!changeDetails}
                 />
               </div>
               <div className="flex flex-col justify-between items-start gap-y-1 w-full">
-                <label htmlFor="mobile" className="font-semibold">
+                <label htmlFor="mobile" className="font-semibold text-sm">
                   Mobile
                 </label>
                 <PhoneInput
@@ -256,7 +257,7 @@ const Profile = () => {
                 />
               </div>
               <div className="flex flex-col justify-between items-start gap-y-1 w-full">
-                <label htmlFor="gender" className="font-semibold">
+                <label htmlFor="gender" className="font-semibold text-sm">
                   Gender
                 </label>
                 <div className="flex justify-between items-center gap-x-4">
@@ -271,12 +272,17 @@ const Profile = () => {
                         name="gender"
                         value={gender.id}
                         onChange={handleInputChange}
-                        className="cursor-pointer w-4 h-4"
+                        className={`w-4 h-4 ${
+                          changeDetails ? "cursor-pointer" : "cursor-default"
+                        }`}
                         disabled={!changeDetails}
+                        checked={gender.id === formData.gender}
                       />
                       <label
                         htmlFor={gender.id}
-                        className="flex items-center cursor-pointer"
+                        className={`flex items-center ${
+                          changeDetails ? "cursor-pointer" : "cursor-default"
+                        }`}
                       >
                         {gender.displayText}
                       </label>
@@ -287,6 +293,9 @@ const Profile = () => {
               <CountrySelect
                 handleSetLocation={handleSetLocation}
                 changeDetails={changeDetails}
+                country={currentUser.country}
+                state={currentUser.state}
+                city={currentUser.city}
               />
             </form>
           </div>

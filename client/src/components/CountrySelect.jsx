@@ -9,7 +9,7 @@ import {
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { City, Country, State } from "country-state-city";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const Dropdown = ({
   label,
@@ -20,17 +20,17 @@ const Dropdown = ({
   changeDetails,
 }) => (
   <div className="flex flex-col justify-between items-start gap-y-1 w-full">
-    <p className="font-semibold">{label}</p>
+    <p className="font-semibold text-sm">{label}</p>
     <Combobox
       value={value}
       onChange={onChange}
       onClose={() => setQuery("")}
-      disabled={changeDetails}
+      disabled={!changeDetails}
     >
       <div className="relative w-full">
         <ComboboxInput
           className={clsx(
-            "w-full rounded-lg bg-gray-100 p-2 border-2 border-gray-400",
+            "w-full rounded-md bg-gray-100 px-2 py-1 border-2 border-gray-400",
             "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
           )}
           displayValue={(item) => item?.name}
@@ -63,89 +63,135 @@ const Dropdown = ({
   </div>
 );
 
-const CountrySelect = ({ handleSetLocation }) => {
+const CountrySelect = ({
+  handleSetLocation,
+  changeDetails,
+  country: paramCountry,
+  state: paramState,
+  city: paramCity,
+}) => {
   const countryList = Country.getAllCountries();
-  const [country, setCountry] = useState();
-  const [state, setState] = useState();
-  const [city, setCity] = useState();
+  const [location, setLocation] = useState({
+    country: null,
+    state: null,
+    city: null,
+  });
   const [query, setQuery] = useState("");
   const [statesList, setStatesList] = useState([]);
   const [citiesList, setCitiesList] = useState([]);
 
   useEffect(() => {
-    setStatesList(State.getStatesOfCountry(country?.isoCode));
-    setQuery("");
-  }, [country]);
+    const selectedCountry =
+      countryList.find((eachCountry) => eachCountry.name === paramCountry) ||
+      null;
+    setLocation((prev) => ({ ...prev, country: selectedCountry }));
+  }, [countryList, paramCountry]);
 
   useEffect(() => {
-    setState(statesList[0]);
-  }, [statesList]);
-
-  useEffect(() => {
-    if (country?.isoCode && state?.isoCode) {
-      setCitiesList(City.getCitiesOfState(country.isoCode, state.isoCode));
+    if (location?.country) {
+      const states = State.getStatesOfCountry(location?.country?.isoCode) || [];
+      setStatesList(states);
+      setLocation((prev) => ({ ...prev, state: null, city: null }));
       setQuery("");
     }
-  }, [country?.isoCode, state?.isoCode]);
+  }, [location.country]);
 
   useEffect(() => {
-    setCity(citiesList[0]);
-  }, [citiesList]);
+    const selectedState =
+      (query && changeDetails
+        ? statesList[0]
+        : statesList.find((eachState) => eachState.name === paramState)) ||
+      null;
+    setLocation((prev) => ({ ...prev, state: selectedState }));
+  }, [statesList, paramState, changeDetails, query]);
 
   useEffect(() => {
-    if (city && country && state) {
-      handleSetLocation(country.name, state.name, city.name);
+    if (location?.state) {
+      const cities =
+        City.getCitiesOfState(
+          location.country?.isoCode,
+          location.state?.isoCode
+        ) || [];
+      setQuery("");
+      setCitiesList(cities);
+      setLocation((prev) => ({ ...prev, city: null }));
     }
-  }, [city, country, state, handleSetLocation]);
+  }, [location.country, location.state]);
 
-  const filteredCountries = query
-    ? countryList.filter((country) =>
-        country.name.toLowerCase().includes(query.toLowerCase())
-      )
-    : countryList;
+  useEffect(() => {
+    const selectedCity =
+      (query && changeDetails
+        ? citiesList[0]
+        : citiesList.find((eachCity) => eachCity.name === paramCity)) || null;
+    setLocation((prev) => ({ ...prev, city: selectedCity }));
+  }, [citiesList, changeDetails, paramCity, query]);
 
-  const filteredStates = query
-    ? statesList.filter((country) =>
-        country.name.toLowerCase().includes(query.toLowerCase())
-      )
-    : statesList;
+  useEffect(() => {
+    if (location?.country && location?.state && location?.city) {
+      handleSetLocation(
+        location.country?.name,
+        location.state?.name,
+        location.city?.name
+      );
+    }
+  }, [location, handleSetLocation]);
 
-  const filteredCities = query
-    ? citiesList.filter((country) =>
-        country.name.toLowerCase().includes(query.toLowerCase())
-      )
-    : citiesList;
+  const filteredCountries = useMemo(
+    () =>
+      query
+        ? countryList.filter((country) =>
+            country.name.toLowerCase().includes(query.toLowerCase())
+          )
+        : countryList,
+    [countryList, query]
+  );
+
+  const filteredStates = useMemo(
+    () =>
+      query
+        ? statesList.filter((state) =>
+            state.name.toLowerCase().includes(query.toLowerCase())
+          )
+        : statesList,
+    [statesList, query]
+  );
+
+  const filteredCities = useMemo(
+    () =>
+      query
+        ? citiesList.filter((city) =>
+            city.name.toLowerCase().includes(query.toLowerCase())
+          )
+        : citiesList,
+    [citiesList, query]
+  );
 
   return (
     <>
       <Dropdown
         label="Country"
-        value={country}
+        value={location.country}
         options={filteredCountries}
-        onChange={setCountry}
-        query={query}
+        onChange={(country) => setLocation((prev) => ({ ...prev, country }))}
         setQuery={setQuery}
+        changeDetails={changeDetails}
       />
-      {country && (
-        <Dropdown
-          label="State"
-          value={state}
-          options={filteredStates}
-          onChange={setState}
-          query={query}
-          setQuery={setQuery}
-        />
-      )}
-      {state && (
-        <Dropdown
-          label="City"
-          value={city}
-          options={filteredCities}
-          onChange={setCity}
-          query={query}
-          setQuery={setQuery}
-        />
-      )}
+      <Dropdown
+        label="State"
+        value={location.state}
+        options={filteredStates}
+        onChange={(state) => setLocation((prev) => ({ ...prev, state }))}
+        setQuery={setQuery}
+        changeDetails={changeDetails}
+      />
+      <Dropdown
+        label="City"
+        value={location.city}
+        options={filteredCities}
+        onChange={(city) => setLocation((prev) => ({ ...prev, city }))}
+        setQuery={setQuery}
+        changeDetails={changeDetails}
+      />
     </>
   );
 };

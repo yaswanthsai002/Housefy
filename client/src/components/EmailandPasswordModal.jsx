@@ -34,7 +34,7 @@ const EmailandPasswordModal = ({ callback, type }) => {
       }
       toast.success(jsonResponse.message);
       dispatch(signOutSuccess());
-      navigate("/signup");
+      type === "delete" ? navigate("/signup") : navigate("/signin");
     } catch (err) {
       const errString = `Error occured while ${
         type === "delete" ? "deleting" : "disabling"
