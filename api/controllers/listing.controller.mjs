@@ -1,6 +1,6 @@
 import Listing from "../models/listing.model.mjs";
 
-export const getAllListings = async (err, req, res, next) => {
+export const getAllListings = async (req, res, next) => {
   try {
     const listings = await Listing.find();
     return res.status(200).json(listings);
@@ -13,7 +13,7 @@ export const getAllListings = async (err, req, res, next) => {
   }
 };
 
-export const getListing = async (err, req, res, next) => {
+export const getListing = async (req, res, next) => {
   try {
     const listing = await Listing.findById(req.params.id);
     if (!listing) {
@@ -29,8 +29,8 @@ export const getListing = async (err, req, res, next) => {
   }
 };
 
-export const addListing = async (err, req, res, next) => {};
+export const addListing = async (req, res, next) => {};
 
-export const updateListing = async (err, req, res, next) => {};
+export const updateListing = async (req, res, next) => {};
 
-export const deleteListing = async (err, req, res, next) => {};
+export const deleteListing = async (req, res, next) => {};

@@ -14,17 +14,17 @@ export const publicNavTabs = [
 export const privateNavTabs = [
   {
     tabId: "PROFILE",
-    tabDisplayText: "View Profile",
+    tabDisplayText: "Profile",
     to: "/profile",
   },
   {
     tabId: "LISTINGS",
-    tabDisplayText: "View Listings",
+    tabDisplayText: "Your Listings",
     to: "/listings",
   },
   {
     tabId: "SETTINGS",
-    tabDisplayText: "View Settings",
+    tabDisplayText: "Account Settings",
     to: "/settings",
   },
 ];

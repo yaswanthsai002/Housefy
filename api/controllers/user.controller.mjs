@@ -62,7 +62,6 @@ export const updateUser = async (req, res, next) => {
       updatedAt,
       ...userData
     } = updatedUser._doc;
-    console.log('User data', userData.dateOfBirth)
     return res.status(200).json({ message: "User Updated", user: userData });
   } catch (err) {
     console.error("Error occurred while updating user:", err);

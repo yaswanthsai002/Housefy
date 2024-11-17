@@ -20,11 +20,13 @@ const listingSchema = new mongoose.Schema({
     type: String,
     required: true,
     enum: ["Apartment", "House", "Condo", "Commercial", "Other"],
+    default: "House"
   },
   status: {
     type: String,
     required: true,
     enum: ["For Sale", "For Rent", "Sold", "Rented"],
+    default: "For Sale"
   },
   address: {
     type: String,
@@ -46,14 +48,6 @@ const listingSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  latitude: {
-    type: Number,
-    required: false,
-  },
-  longitude: {
-    type: Number,
-    required: false,
-  },
   price: {
     type: Number,
     required: true,
@@ -61,16 +55,8 @@ const listingSchema = new mongoose.Schema({
   currency: {
     type: String,
     required: true,
-    default: "USD",
-  },
-  payment_frequency: {
-    type: String,
-    enum: ["Monthly", "Yearly"],
-    required: false,
-  },
-  tax_included: {
-    type: Boolean,
-    default: false,
+    enum: ["INR", "USD"],
+    default: "INR",
   },
   area: {
     type: Number,
@@ -98,14 +84,6 @@ const listingSchema = new mongoose.Schema({
     enum: ["Furnished", "Unfurnished", "Semi-furnished"],
     required: false,
   },
-  heating: {
-    type: String,
-    required: false,
-  },
-  cooling: {
-    type: String,
-    required: false,
-  },
   amenities: {
     type: [String],
     default: [],
@@ -115,10 +93,6 @@ const listingSchema = new mongoose.Schema({
     // required: true,
   },
   video: {
-    type: String,
-    required: false,
-  },
-  floor_plan: {
     type: String,
     required: false,
   },

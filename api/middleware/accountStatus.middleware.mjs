@@ -6,7 +6,7 @@ const checkAccountStatus = async (req, res, next) => {
       ? await User.findById(req.user.id)
       : await User.findOne({ email: req.body.email });
     if (!user) {
-      console.log('User Not Found', user);
+      console.log("User Not Found", user);
       return res.status(404).json({ message: "User not found" });
     }
 
@@ -14,7 +14,6 @@ const checkAccountStatus = async (req, res, next) => {
       console.log("User account is disabled", user);
       return res.status(403).json({ message: "Account is disabled" });
     }
-
     next();
   } catch (error) {
     res

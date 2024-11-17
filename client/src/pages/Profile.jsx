@@ -260,7 +260,7 @@ const Profile = () => {
                 <label htmlFor="gender" className="font-semibold text-sm">
                   Gender
                 </label>
-                <div className="flex justify-between items-center gap-x-4">
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-x-4">
                   {genderList.map((gender) => (
                     <div
                       className="flex justify-between items-center gap-x-2"

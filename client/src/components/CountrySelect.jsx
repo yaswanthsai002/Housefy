@@ -81,29 +81,58 @@ const CountrySelect = ({
   const [citiesList, setCitiesList] = useState([]);
 
   useEffect(() => {
-    const selectedCountry =
-      countryList.find((eachCountry) => eachCountry.name === paramCountry) ||
-      null;
-    setLocation((prev) => ({ ...prev, country: selectedCountry }));
-  }, [countryList, paramCountry]);
+    let selectedCountry = null;
+    if (changeDetails) {
+      if (query) {
+        selectedCountry =
+          countryList.find((eachCountry) =>
+            eachCountry.name.toLowerCase().includes(query.toLowerCase())
+          ) || null;
+      } else {
+        selectedCountry =
+          countryList.find(
+            (eachCountry) => eachCountry.name === paramCountry
+          ) || null;
+      }
+    } else {
+      selectedCountry =
+        countryList.find((eachCountry) => eachCountry.name === paramCountry) ||
+        null;
+    }
+    setLocation((prev) => ({
+      ...prev,
+      country: selectedCountry,
+      state: null,
+      city: null,
+    }));
+  }, [countryList, paramCountry, changeDetails]);
 
   useEffect(() => {
     if (location?.country) {
       const states = State.getStatesOfCountry(location?.country?.isoCode) || [];
       setStatesList(states);
-      setLocation((prev) => ({ ...prev, state: null, city: null }));
       setQuery("");
     }
   }, [location.country]);
 
   useEffect(() => {
-    const selectedState =
-      (query && changeDetails
-        ? statesList[0]
-        : statesList.find((eachState) => eachState.name === paramState)) ||
-      null;
+    let selectedState = null;
+    if (changeDetails) {
+      if (query) {
+        selectedState =
+          statesList.find((eachState) =>
+            eachState.name.toLowerCase().includes(query.toLowerCase())
+          ) || null;
+      } else {
+        selectedState =
+          statesList.find((eachState) => eachState.name === paramState) || null;
+      }
+    } else {
+      selectedState =
+        statesList.find((eachState) => eachState.name === paramState) || null;
+    }
     setLocation((prev) => ({ ...prev, state: selectedState }));
-  }, [statesList, paramState, changeDetails, query]);
+  }, [statesList, paramState, changeDetails]);
 
   useEffect(() => {
     if (location?.state) {
@@ -119,12 +148,23 @@ const CountrySelect = ({
   }, [location.country, location.state]);
 
   useEffect(() => {
-    const selectedCity =
-      (query && changeDetails
-        ? citiesList[0]
-        : citiesList.find((eachCity) => eachCity.name === paramCity)) || null;
+    let selectedCity = null;
+    if (changeDetails) {
+      if (query) {
+        selectedCity =
+          citiesList.find((eachCity) =>
+            eachCity.name.toLowerCase().includes(query.toLowerCase())
+          ) || null;
+      } else {
+        selectedCity =
+          citiesList.find((eachCity) => eachCity.name === paramCity) || null;
+      }
+    } else {
+      selectedCity =
+        citiesList.find((eachCity) => eachCity.name === paramCity) || null;
+    }
     setLocation((prev) => ({ ...prev, city: selectedCity }));
-  }, [citiesList, changeDetails, paramCity, query]);
+  }, [citiesList, paramCity, changeDetails]);
 
   useEffect(() => {
     if (location?.country && location?.state && location?.city) {
@@ -134,7 +174,7 @@ const CountrySelect = ({
         location.city?.name
       );
     }
-  }, [location, handleSetLocation]);
+  }, [location]);
 
   const filteredCountries = useMemo(
     () =>
